@@ -1,0 +1,17 @@
+{
+  "name": "V2T - Voice to Text",
+  "short_name": "V2T",
+  "description": "Premium dictation app powered by OpenAI Whisper",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#059669",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/* ========================================
+   V2T Design System - Theme Configuration
+   Tailwind CSS v4 (CSS-first config)
+   DESIGN_VARIANCE: 8 | MOTION_INTENSITY: 9 | VISUAL_DENSITY: 4
+   ======================================== */
+
+@theme {
+  /* -- Fonts -- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* -- Colors: Neutral Base (Zinc/Slate) -- */
+  --color-surface: #f9fafb;
+  --color-card: #ffffff;
+  --color-card-border: rgba(148, 163, 184, 0.5);
+
+  /* -- Accent: Emerald (single, saturation < 80%, no purple/blue) -- */
+  --color-accent-50: #ecfdf5;
+  --color-accent-100: #d1fae5;
+  --color-accent-200: #a7f3d0;
+  --color-accent-300: #6ee7b7;
+  --color-accent-400: #34d399;
+  --color-accent-500: #10b981;
+  --color-accent-600: #059669;
+  --color-accent-700: #047857;
+  --color-accent-800: #065f46;
+  --color-accent-900: #064e3b;
+  --color-accent-950: #022c22;
+
+  /* -- Shadows -- */
+  --shadow-diffusion: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+
+  /* -- Border Radius -- */
+  --radius-container: 2.5rem;
+  --radius-card: 2.5rem;
+  --radius-button: 1rem;
+
+  /* -- Animations -- */
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-pulse-gentle: pulse-gentle 2s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse-gentle {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+/* ========================================
+   Base Layer - Global Resets and Defaults
+   ======================================== */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: theme(--color-zinc-900);
+    font-family: var(--font-sans);
+  }
+
+  /* Premium scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: theme(--color-zinc-300);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme(--color-zinc-400);
+  }
+
+  /* Selection color matching accent */
+  ::selection {
+    background-color: var(--color-accent-200);
+    color: var(--color-accent-950);
+  }
+}
