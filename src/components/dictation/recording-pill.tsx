@@ -214,6 +214,33 @@ export function RecordingPill() {
     reset,
   } = useAudioRecorder();
 
+  const pillRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-resize window to fit the pill (PWA standalone)
+  useEffect(() => {
+    const el = pillRef.current;
+    if (!el) return;
+
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (navigator as unknown as { standalone?: boolean }).standalone === true;
+
+    if (!isStandalone) return;
+
+    const padding = 32; // breathing room around pill
+    const titleBar = 38; // macOS standalone title bar
+
+    const observer = new ResizeObserver(() => {
+      const rect = el.getBoundingClientRect();
+      const w = Math.ceil(rect.width) + padding;
+      const h = Math.ceil(rect.height) + padding + titleBar;
+      window.resizeTo(w, h);
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // Auto-reset after success (2s) or error (3s)
   useEffect(() => {
     if (state === "success") {
@@ -278,6 +305,7 @@ export function RecordingPill() {
 
   return (
     <motion.button
+      ref={pillRef}
       layout
       onClick={handleClick}
       className={`relative inline-flex cursor-pointer items-center justify-start overflow-hidden rounded-full border bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)] transition-colors will-change-[width] ${state === "idle"
