@@ -91,6 +91,15 @@
    ======================================== */
 
 @layer base {
+  html,
+  body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    width: fit-content;
+    height: fit-content;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
