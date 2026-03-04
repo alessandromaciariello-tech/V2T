@@ -1,0 +1,11 @@
+appId: com.v2t.app
+productName: V2T
+directories:
+  output: dist-electron
+files:
+  - electron/dist/**/*
+  - out/**/*
+  - .env.local
+mac:
+  category: public.app-category.utilities
+  target: dmg

@@ -216,30 +216,40 @@ export function RecordingPill() {
 
   const pillRef = useRef<HTMLButtonElement>(null);
 
-  // Auto-resize window to fit the pill (PWA standalone)
+  // Electron: auto-resize window to fit the pill
   useEffect(() => {
     const el = pillRef.current;
-    if (!el) return;
+    if (!el || !window.electronAPI) return;
 
-    const isStandalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (navigator as unknown as { standalone?: boolean }).standalone === true;
-
-    if (!isStandalone) return;
-
-    const padding = 32; // breathing room around pill
-    const titleBar = 38; // macOS standalone title bar
+    const padding = 16;
 
     const observer = new ResizeObserver(() => {
       const rect = el.getBoundingClientRect();
-      const w = Math.ceil(rect.width) + padding;
-      const h = Math.ceil(rect.height) + padding + titleBar;
-      window.resizeTo(w, h);
+      window.electronAPI!.resizeWindow(
+        Math.ceil(rect.width) + padding,
+        Math.ceil(rect.height) + padding
+      );
     });
 
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Electron: listen for global shortcut toggle
+  useEffect(() => {
+    if (!window.electronAPI) return;
+
+    const cleanup = window.electronAPI.onToggleRecording(() => {
+      const currentState = stateRef.current;
+      if (currentState === "idle") {
+        startRecording();
+      } else if (currentState === "recording") {
+        stopRecording();
+      }
+    });
+
+    return cleanup;
+  }, [startRecording, stopRecording]);
 
   // Auto-reset after success (2s) or error (3s)
   useEffect(() => {

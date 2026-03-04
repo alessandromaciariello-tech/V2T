@@ -81,25 +81,46 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     setState("transcribing");
 
     try {
-      const formData = new FormData();
-      const ext = getExtension(mimeTypeRef.current);
-      formData.append("audio", blob, `recording.${ext}`);
+      const isElectron = !!window.electronAPI;
 
-      const response = await fetch("/api/transcribe", {
-        method: "POST",
-        body: formData,
-      });
+      let data: { text?: string; error?: string };
 
-      const data = await response.json();
+      if (isElectron) {
+        // Electron: send via IPC to main process
+        const arrayBuffer = await blob.arrayBuffer();
+        data = await window.electronAPI!.transcribe(
+          arrayBuffer,
+          mimeTypeRef.current || "audio/webm"
+        );
+      } else {
+        // Browser: send via fetch to API route
+        const formData = new FormData();
+        const ext = getExtension(mimeTypeRef.current);
+        formData.append("audio", blob, `recording.${ext}`);
 
-      if (response.ok && data.text) {
+        const response = await fetch("/api/transcribe", {
+          method: "POST",
+          body: formData,
+        });
+        data = await response.json();
+        if (!response.ok && !data.error) {
+          data.error = "Errore durante la trascrizione. Riprova.";
+        }
+      }
+
+      if (data.text) {
         setTranscript(data.text);
-        // Auto-copy to clipboard and return to previous app
-        try {
-          await navigator.clipboard.writeText(data.text);
-          window.blur();
-        } catch {
-          // Fallback: silent fail, transcript is still available
+        if (isElectron) {
+          // Electron: copy + auto-paste via main process
+          await window.electronAPI!.copyAndPaste(data.text);
+        } else {
+          // Browser: copy to clipboard and blur
+          try {
+            await navigator.clipboard.writeText(data.text);
+            window.blur();
+          } catch {
+            // Fallback: silent fail
+          }
         }
         setState("success");
       } else {
